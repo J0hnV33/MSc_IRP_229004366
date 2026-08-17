@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#SBATCH --output=LiBi_HDAC1_2-%j.out
+#SBATCH --error=LiBi_HDAC1_2-%j.err
+#SBATCH --job-name=LiBi_HDAC1_2
+#SBATCH --time=12:00:00
+#SBATCH --mem=50gb
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=20
+#SBATCH -A smac
+
+# ============================
+# Configuration
+# ============================
+GTF="/scratch/smac/ks728/YM_lab_data/HDAC3_siRNA/refs/Latest_Ensembl_GRCh38_version_116_2026_April/Homo_sapiens.GRCh38.116.gtf"   
+LiBi_count="/scratch/smac/shared/hPSC_data/LiBiNorm/LiBiNorm count"
+BAM_DIR="/scratch/smac/jvk3/HDAC1_2/Bulk_processing/1_STAR_aligned"
+OUT_DIR="/scratch/smac/jvk3/HDAC1_2/Bulk_processing/2_STAR_libinorm_counts"
+mkdir -p "$OUT_DIR"
+
+module load samtools
+
+# ============================
+# Auto-detect all BAMs
+# ============================
+echo "=== Detecting BAM files ==="
+mapfile -t BAMS < <(ls ${BAM_DIR}/*_Aligned.sortedByCoord.out.bam 2>/dev/null)
+
+if [ ${#BAMS[@]} -eq 0 ]; then
+    echo "ERROR: No BAM files found in $BAM_DIR"
+    exit 1
+fi
+echo "BAMs found: ${#BAMS[@]}"
+printf "  %s\n" "${BAMS[@]}"
+echo ""
+
+for BAM in "${BAMS[@]}"; do
+
+    SAMPLE=$(basename "$BAM" _Aligned.sortedByCoord.out.bam)
+    echo "=== Processing: $SAMPLE ==="
+
+    [ ! -s "$BAM" ] && { echo "ERROR: BAM missing — skipping"; continue; }
+
+    # Check index exists — generate if missing
+    if [ ! -f "${BAM}.bai" ]; then
+        echo "Index missing — generating..."
+        samtools index -@ $SLURM_CPUS_PER_TASK $BAM
+    fi
+
+    # ============================
+    # Run LiBiNorm directly on
+    # coordinate-sorted BAM
+    # No name-sort step needed
+    # ============================
+    echo "Running LiBiNorm..."
+    ${LiBi_count} \
+        --stranded=reverse \
+        -r pos \
+        -z \
+        -j \
+        -u ${OUT_DIR}/${SAMPLE}_bias \
+        -c ${OUT_DIR}/${SAMPLE}_counts.txt \
+        $BAM \
+        $GTF
+
+    # Verify output
+    if [ -s "${OUT_DIR}/${SAMPLE}_counts.txt" ]; then
+        echo "OK: $(wc -l < ${OUT_DIR}/${SAMPLE}_counts.txt) genes counted"
+    else
+        echo "ERROR: no output produced for $SAMPLE"
+    fi
+
+    echo "Bias files:"
+    ls -lh ${OUT_DIR}/${SAMPLE}_bias* 2>/dev/null || \
+        echo "WARNING: no bias files produced"
+
+    echo "=== Completed: $SAMPLE ==="
+    echo ""
+
+done
+
+echo "=== All samples complete ==="
+ls -lh ${OUT_DIR}/
+

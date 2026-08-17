@@ -1,0 +1,94 @@
+#!/bin/bash
+#SBATCH --job-name=STAR_align_H2rerun
+#SBATCH --output=STAR_align_H2rerun-%j.out
+#SBATCH --error=STAR_align_H2rerun-%j.err
+#SBATCH --time=12:00:00
+#SBATCH --mem=60G
+#SBATCH --cpus-per-task=16
+#SBATCH --nodes=1
+#SBATCH -A smac
+#SBATCH --mail-type=BEGIN,END,FAIL
+
+module load star/2.7.11a-5kstrrw
+module load samtools
+
+# ============================
+# Configuration
+# ============================
+INDEX="/scratch/smac/shared/hPSC_data/STAR_idx"
+FASTQ_DIR="/scratch/smac/shared/hPSC_data/concat/HDAC1_2"       
+OUT_DIR="/scratch/smac/jvk3/HDAC1_2/Bulk_processing/1_STAR_aligned"
+mkdir -p "$OUT_DIR"
+
+# ============================
+# Specify your 3 samples here
+# Just the sample prefix — without _R1.fastq.gz
+# ============================
+SAMPLES=(
+    "H2_EKRN260031942-1A_concatL1_L5"
+)
+echo "=== STAR Alignment ==="
+echo "Samples to align: ${#SAMPLES[@]}"
+echo "Index: $INDEX"
+echo "Output: $OUT_DIR"
+echo "Started: $(date)"
+echo ""
+
+# ============================
+# Verify index exists
+# ============================
+[ ! -f "$INDEX/genomeParameters.txt" ] && \
+    { echo "ERROR: STAR index not found at $INDEX"; exit 1; }
+
+# ============================
+# Loop over specified samples
+# ============================
+for SAMPLE in "${SAMPLES[@]}"; do
+
+    echo "=== Processing: $SAMPLE ==="
+    echo "Started: $(date)"
+
+    R1="${FASTQ_DIR}/${SAMPLE}_1.fq.gz"
+    R2="${FASTQ_DIR}/${SAMPLE}_2.fq.gz"
+
+    # Verify input files exist and are non-empty
+    [ ! -s "$R1" ] && { echo "ERROR: R1 not found: $R1"; continue; }
+    [ ! -s "$R2" ] && { echo "ERROR: R2 not found: $R2"; continue; }
+
+    echo "R1: $R1 ($(ls -lh $R1 | awk '{print $5}'))"
+    echo "R2: $R2 ($(ls -lh $R2 | awk '{print $5}'))"
+
+    STAR \
+        --runThreadN $SLURM_CPUS_PER_TASK \
+        --genomeDir $INDEX \
+        --readFilesIn $R1 $R2 \
+        --readFilesCommand zcat \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMattributes NH HI AS NM MD \
+        --outSAMstrandField intronMotif \
+        --outFilterIntronMotifs RemoveNoncanonical \
+        --twopassMode Basic \
+        --outFileNamePrefix ${OUT_DIR}/${SAMPLE}_ \
+        --outBAMsortingThreadN $SLURM_CPUS_PER_TASK
+
+    # Check alignment succeeded
+    BAM="${OUT_DIR}/${SAMPLE}_Aligned.sortedByCoord.out.bam"
+    if [ ! -s "$BAM" ]; then
+        echo "ERROR: BAM not produced for $SAMPLE"
+        continue
+    fi
+
+    # Index BAM
+    echo "Indexing BAM..."
+    samtools index $BAM
+
+    # Alignment summary
+    echo "=== Alignment summary: $SAMPLE ==="
+    samtools flagstat $BAM
+
+    echo "=== Completed: $SAMPLE at $(date) ==="
+    echo ""
+
+done
+
+echo "=== All samples complete: $(date) ==="
