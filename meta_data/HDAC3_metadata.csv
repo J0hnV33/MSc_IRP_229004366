@@ -1,0 +1,7 @@
+sample,filename,rep,condition
+Scr_1,A1.sam_sorted.counts,1,Scramble
+Scr_2,A2.sam_sorted.counts,2,Scramble
+Scr_3,A3.sam_sorted.counts,3,Scramble
+HD3_si_1,B1.sam_sorted.counts,1,HDAC3_siRNA
+HD3_si_2,B2.sam_sorted.counts,2,HDAC3_siRNA
+HD3_si_3,B3.sam_sorted.counts,3,HDAC3_siRNA

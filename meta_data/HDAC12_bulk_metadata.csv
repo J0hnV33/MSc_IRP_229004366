@@ -1,0 +1,10 @@
+sample,filename,rep,condition
+Scr_R1,A1_EKRN260031917-1A_concatL6_L8_counts.txt,1,Scramble
+Scr_R2,A2_EKRN260031918-1A_concatL6_L8_counts.txt,2,Scramble
+Scr_R3,A3_EKRN260031939-1A_concatL1_L5_counts.txt,3,Scramble
+HDAC1_R1,H1_EKRN260031941-1A_concatL1_L5_counts.txt,1,siHDAC1
+HDAC1_R2,H2_EKRN260031942-1A_concatL1_L5_counts.txt,2,siHDAC1
+HDAC1_R3,H3_EKRN260031943-1A_concatL1_L5_counts.txt,3,siHDAC1
+HDAC2_R1,B1_EKRN260031919-1A_concatL6_L8_counts.txt,1,siHDAC2
+HDAC2_R2,B2_EKRN260031920-1A_concatL6_L8_counts.txt,2,siHDAC2
+HDAC2_R3,B3_EKRN260031940-1A_concatL1_L5_counts.txt,3,siHDAC2

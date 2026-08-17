@@ -1,0 +1,10 @@
+sample,filename,rep,condition
+Scramble_R1,A1_EKRN260031917-1A_concatL6_L8_Xchr_ase.txt,1,Scramble
+Scramble_R2,A2_EKRN260031918-1A_concatL6_L8_Xchr_ase.txt,2,Scramble
+Scramble_R3,A3_EKRN260031939-1A_concatL1_L5_Xchr_ase.txt,3,Scramble
+siHDAC1_R1,H1_EKRN260031941-1A_concatL1_L5_Xchr_ase.txt,1,siHDAC1
+siHDAC1_R2,H2_EKRN260031942-1A_concatL1_L5_Xchr_ase.txt,2,siHDAC1
+siHDAC1_R3,H3_EKRN260031943-1A_concatL1_L5_Xchr_ase.txt,3,siHDAC1
+siHDAC2_R1,B1_EKRN260031919-1A_concatL6_L8_Xchr_ase.txt,1,siHDAC2
+siHDAC2_R2,B2_EKRN260031920-1A_concatL6_L8_Xchr_ase.txt,2,siHDAC2
+siHDAC2_R3,B3_EKRN260031940-1A_concatL1_L5_Xchr_ase.txt,3,siHDAC2

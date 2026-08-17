@@ -1,0 +1,13 @@
+sample,filename,rep,condition
+Naive_R1,C1_EKRN260031921-1A_concatL6_L8_raw_counts.txt,1,Naive
+Naive_R2,C2_EKRN260031922-1A_concatL6_L8_raw_counts.txt,2,Naive
+Naive_R3,C3_EKRN260031923-1A_concatL6_L8_raw_counts.txt,3,Naive
+Day3_R1,D1_EKRN260031924-1A_concatL6_L8_raw_counts.txt,1,Cap. Day 3
+Day3_R2,D2_EKRN260031944-1A_concatL1_L5_raw_counts.txt,2,Cap. Day 3
+Day3_R3,D3_EKRN260031945-1A_concatL1_L5_raw_counts.txt,3,Cap. Day 3
+Day7_R1,G1_EKRN260031947-1A_concatL1_L5_raw_counts.txt,1,Cap. Day 7
+Day7_R2,G2_EKRN260031948-1A_concatL1_L5_raw_counts.txt,2,Cap. Day 7
+Day7_R3,G3_EKRN260031949-1A_concatL1_L5_raw_counts.txt,3,Cap. Day 7
+Primed_R1,E1_EKRN260031925-1A_concatL6_L8_raw_counts.txt,1,Primed
+Primed_R2,E2_EKRN260031926-1A_concatL6_L8_raw_counts.txt,2,Primed
+Primed_R3,E3_EKRN260031946-1A_concatL1_L5_raw_counts.txt,3,Primed
